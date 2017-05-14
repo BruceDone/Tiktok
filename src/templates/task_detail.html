@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+
+    <script>
+        var jobName = '{{ job.name }}';
+        var taskName = '{{ task_name }}';
+    </script>
+
+    <link rel="stylesheet" href="/static/css/task_detail.css"></link>
+
+    {% raw %}
+    <script id="history-table-template" type="text/x-handlebars-template">
+        <tr data-log='{{ historyId }}'>
+            {{> historyId }}
+            <td><span data-attr='completion_time' data-transform='class title'
+                      class={{ completionTime }}>{{ completionTime }}</span>
+            </td>
+            <td><span data-attr='runtime' data-transform='class title'
+                      class={{ runtime }}>{{ runtime }}</span>
+            </td>
+            <td>
+                <button class='btn btn-primary' onclick="window.location.href = '{{ logURL }}';">View</button>
+            </td>
+        </tr>
+    </script>
+    <script id="history-name-template" type="text/x-handlebars-template">
+        <td data-attr='log_id'>
+            {{#if historyId}}{{historyId}}{{/if}}
+        </td>
+    </script>
+    {% endraw %}
+
+{% endblock head %}
+
+{% block navbar_current %}
+    <li><a href='/job/{{ job.id }}'>Job: {{ job.name }}</a></li>
+    <li><a href='#'>Task Detail: {{ task_name }}</a></li>
+{% endblock navbar_current %}
+
+{% block content %}
+
+    <div class='page-header'>
+        <h3>Task Detail: {{ task_name }}</h3>
+        <h3 id='task-status' class='right'></h3>
+    </div>
+
+    <div class='alert alert-caution'>
+        This page is still a work in progress. Information here may not be updated in realtime; refresh the page to make
+        sure you're seeing accurate information.
+    </div>
+
+    <div class='row' id='timeout'>
+
+        <div class='span12'>
+            <h3>Task Timeouts (in seconds, 0 to disable)</h3>
+        </div>
+
+        <div class='span6'>
+
+            <div id='soft-timeout-alert' class='alert hidden'>
+            </div>
+
+            <form id='soft-timeout-form' class='form form-horizontal'>
+                <div class='control-group'>
+                    <label class='control-label' for='soft-timeout'>Soft Timeout (TERM)</label>
+                    <div class='controls'>
+                        <input id='soft-timeout' type='text' class='input'
+                               value={{ task.soft_timeout }}></input>
+                    </div>
+                </div>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <button id='save-soft-timeout' class='btn btn-success' onclick='return false;'>Set Soft
+                            Timeout
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class='span6'>
+
+            <div id='hard-timeout-alert' class='alert hidden'>
+            </div>
+
+            <form id='hard-timeout-form' class='form form-horizontal'>
+                <div class='control-group'>
+                    <label class='control-label' for='hard-timeout'>Hard Timeout (KILL)</label>
+                    <div class='controls'>
+                        <input id='hard-timeout' type='text' class='input'
+                               value={{ task.hard_timeout }}></input>
+                    </div>
+                </div>
+                <div class='control-group'>
+                    <div class='controls'>
+                        <button id='save-hard-timeout' class='btn btn-success' onclick='return false;'>Set Hard
+                            Timeout
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+    Remote host:
+    <input class="input-xxlarge" id="disabledInput" type="text" value= {{ task.hostname }}>
+
+    <div id='logs' class='row'>
+        <div class='span12'>
+
+            <h3>Run Logs</h3>
+
+            <div class='log-controls'>
+                <button id='head-stdout' class='btn btn-sequence btn-primary'>Head Stdout</button>
+                <button id='tail-stdout' class='btn btn-sequence btn-primary'>Tail Stdout</button>
+                <button id='head-stderr' class='btn btn-sequence btn-primary'>Head Stderr</button>
+                <button id='tail-stderr' class='btn btn-sequence btn-primary'>Tail Stderr</button>
+
+                <span id='log-type' class='right-header'></span>
+            </div>
+
+            <textarea id='log-detail' class='hidden'></textarea>
+
+        </div>
+    </div>
+
+    <table class='table table-striped'>
+        <thead>
+        <th>Run ID</th>
+        <th>Completion Time</th>
+        <th>Runtime</th>
+        <th></th>
+        </thead>
+        <tbody id='history-body'>
+        </tbody>
+    </table>
+
+{% endblock content %}
+
+{% block body_scripts %}
+    <script src="/static/js/task_detail.js"></script>
+{% endblock body_scripts %}

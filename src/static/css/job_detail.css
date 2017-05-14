@@ -1,0 +1,100 @@
+.page-header {
+    margin-bottom: 5px;
+}
+
+.page-header h3 {
+    display: inline-block;
+}
+
+.section-header {
+    display: inline-block;
+}
+
+.right {
+    text-align: right;
+}
+
+.btn-sequence {
+    margin-right: 10px;
+}
+
+.btn-sequence-right {
+    margin-left: 10px;
+}
+
+.page-header .right {
+    float: right;
+}
+
+.page-header .status-waiting {
+    color: grey;
+}
+
+.page-header .status-running {
+    color: green;
+}
+
+.page-header .status-failed {
+    color: red;
+}
+
+.task-failed {
+    color: red;
+}
+
+textarea {
+    width: 100%;
+}
+
+#schedule label {
+    margin-top: -11px;
+}
+
+#table-toggle {
+    float: right;
+    margin-top: 18px;
+}
+
+td:last-child {
+    width: 17%;
+}
+
+td > i {
+    opacity: 0;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+td:hover > i {
+    opacity: 1;
+}
+
+i.icon-info-sign {
+    float: right;
+    font-size: 24px;
+    color: #6495ED;
+    cursor: pointer;
+}
+
+div.relative-holder {
+    position: relative;
+}
+
+.chart-help {
+    border: 1px solid #EEEEEE;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.cron {
+    margin: 10px;
+    border: 1px dashed #ccc;
+    padding: 10px;
+    font-family: Helvetica, Arial, sans-serif;
+    color: #222;
+    line-height: 24px;
+}
+
+.cron select{
+    width: 100px;
+}

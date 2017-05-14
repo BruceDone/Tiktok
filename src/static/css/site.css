@@ -1,0 +1,16 @@
+body {
+	padding-top: 50px;
+}
+
+.page-header {
+	margin-top: 0px;
+}
+
+.alert {
+	margin-left: 0px;
+	width: 95%;
+}
+
+.inline {
+	display: inline-block;
+}

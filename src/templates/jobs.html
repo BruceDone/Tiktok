@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="/static/css/jobs.css"></link>
+
+    {% raw %}
+
+    <script id="jobs-table-template" type="text/x-handlebars-template">
+        <tr data-job='{{ jobName }}'>
+            {{> jobName }}
+            <td><span data-attr='status' data-transform='class title'
+                      class={{ jobStatus }}></span>
+            </td>
+            <td data-attr='tasks' data-transform='length'></td>
+            <td data-attr='cron_schedule'></td>
+            <td data-attr='next_run' data-transform='datetime'></td>
+            <td>
+                <button class='btn btn-primary'
+                        onclick="window.location.href = '{{ jobURL }}';">
+                    View
+                </button>
+                <button class='btn btn-info job-export'
+                        onclick="window.location.href = '{{ exportURL }}';">
+                    Export
+                </button>
+                <button class='btn btn-danger job-delete' onclick="return false;"><i class='icon-trash'></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
+    <script id="job-name-template" type="text/x-handlebars-template">
+        <td data-attr='name'>
+            {{#if jobName}}{{jobName}}{{/if}}
+            <i class='icon-pencil edit-job'></i>
+        </td>
+    </script>
+
+    <script id="edit-job-name-template" type="text/x-handlebars-template">
+        <td>
+            <input type='text' class='submit-on-enter' data-original-name='{{ jobName }}'
+                   value='{{ jobName }}'></input>
+            <button class='btn btn-success save-job-name'>Save</button>
+        </td>
+    </script>
+
+    {% endraw %}
+
+{% endblock head %}
+
+{% block content %}
+
+    <div class='page-header'><h3>Registered Jobs</h3></div>
+
+    <div id='table-alert' class='alert hidden'>
+    </div>
+
+    <table class='table table-striped'>
+        <thead>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Tasks</th>
+        <th>Schedule</th>
+        <th>Next Run</th>
+        <th></th>
+        </thead>
+        <tbody id='jobs-body'>
+        </tbody>
+    </table>
+
+    <div id='new-alert' class='alert hidden'>
+    </div>
+
+    <div class='row'>
+        <div class='span12'>
+
+            <h4 class='inline control-label'>Add New Job</h4>
+            <form class='form form-inline'>
+                <input id='new-job-name' type='text' class='aligned-input' placeholder='Job Name'></input>
+                <button id='add-job' class='btn btn-success' onclick='return false;'>Add Job</button>
+            </form>
+
+        </div>
+    </div>
+
+    <div class='row'>
+        <div class='span12'>
+
+            <h4 class='inline control-label'>Import Job from JSON</h4>
+            <form id='job-importer' class='form form-inline'
+                  enctype='multipart/form-data'
+                  method='post'>
+                <input id='new-job-name' type='file' name='file' class='aligned-input'></input>
+                <button id='import-job' type='submit'
+                        class='btn btn-success' onsubmit='return false;'>Import Job
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block body_scripts %}
+    <script src="/static/js/jobs.js"></script>
+{% endblock body_scripts %}

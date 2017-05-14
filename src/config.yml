@@ -1,0 +1,111 @@
+Dagobahd:
+
+  # Controls Flask's debug parameter, which will give you stacktraces in your
+  # browser and set Flask's request logger to the DEBUG level.
+  debug: False
+
+  # host and port for the Flask app. set host to 0.0.0.0 to listen on all IPs
+  host: 127.0.0.1
+  port: 9000
+
+  # the app's secret key, used for maintaining user sessions
+  app_secret: app_info_close
+
+  # credentials for single-user auth
+  auth_disabled: False
+  password: dagobah
+
+  # choose one of the available backends
+  # None: Dagobah will not use a backend to permanently store data
+  # mongo: store results in MongoDB. see the MongoBackend section in this file
+  backend: mongo
+
+  # choose one of the available email templates
+  # None: Dagobah won't send you emails when a job finishes or fails
+  # text: Simple text format
+  # basic: Simple, tabular HTML email
+  email: basic
+
+  # SSH config file for remote host authentication.
+  # If you don't plan on executing tasks on remote servers, leaving this
+  # default is fine. If you need to create an ssh config, the default
+  # location is sugested
+  ssh_config: ~/.ssh/config
+
+Logging:
+
+  # Logging settings for everything other than Flask requests, e.g.
+  # jobs starting and stopping, database logging, SSH problems
+  Core:
+    enabled: True
+
+    # specify a full path to the log file
+    # alternatively, specify "default" to log to a file in the dagobahd directory
+    # You can also specify None to disable logging to a file
+    logfile: default
+
+    # if True, also log to stdout
+    log_to_stdout: False
+
+    # specify the log level to use
+    # choose one of [debug, info, warning, error, critical]
+    loglevel: info
+
+  # Logging settings for web requests through the Flask app
+  Requests:
+    enabled: False
+
+    # specify a full path to the log file
+    # alternatively, specify "default" to log to a file in the dagobahd directory
+    # You can also specify None to disable logging to a file
+    logfile: default
+
+    # if True, also log to stdout
+    log_to_stdout: False
+
+    # specify the log level to use.
+    # choose one of [debug, info, warning, error, critical]
+    # If Dagobahd.debug is True, this will always be debug
+    loglevel: info
+
+Email:
+
+  # set host and port of the SMTP server to use to send mail
+  # e.g. host: smtp.gmail.com   port: 587
+  host: smtp.gmail.com
+  port: 587
+
+  # email server authentication
+  auth_required: True
+  user: None
+  password: None
+
+
+  # tls is required for some mail servers, specifically Gmail
+  use_tls: True
+
+  # from address in the emails from Dagobah.
+  # supports the following special variables within curly brackets {}
+  # {HOSTNAME}: the machine's hostname
+  from_address: dagobah@{HOSTNAME}
+
+  # list of email addresses to send reports to, e.g. ['myemail@gmail.com']
+  recipients: []
+
+  # sets whether Dagobah sends you emails on successful job completion
+  send_on_success: True
+
+  # sets whether Dagobah sends you emails on job and task failures
+  send_on_failure: True
+
+MongoBackend:
+
+  # connection details to a mongo database
+  host: mongodb
+  port: 27017
+  db: dagobah
+
+  # names of collections within the db specified above
+  dagobah_collection: dagobah
+  job_collection: dagobah_job
+  log_collection: dagobah_log

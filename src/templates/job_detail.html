@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/job_detail.css"></link>
+    <link rel="stylesheet" href="/static/css/job_graph.css"></link>
+    <link rel="stylesheet" href="/static/css/jquery-cron.css"></link>
+    <script src="/static/lib/jquery-1.8.3.min.js"></script>
+    <script src="/static/lib/jquery-cron.js"></script>
+
+    <script>
+        var jobName = '{{ job.name }}';
+        var knownHosts = {{ hosts|tojson|safe }};
+    </script>
+
+    <script type="application/javascript">
+        var $jq = jQuery.noConflict();
+
+        $jq(document).ready(function () {
+            $jq("#div_cron").cron({
+                initial: "*/5 * * * *",
+                onChange: function () {
+                    $jq("#txtcron").text($jq(this).cron("value"));
+                },
+                customValues: {
+                    "5 Minutes": "*/5 * * * *"
+                }
+            });
+        });
+    </script>
+
+    {% raw %}
+
+    <script id='tasks-table-headers-template' type="text/x-handlebars-template">
+        <th>{{ headerName }}</th>
+    </script>
+
+    <script id="tasks-table-results-template" type="text/x-handlebars-template">
+        <tr data-task='{{ taskName }}'>
+            {{> tasksName }}
+            <td data-attr='started_at' data-transform='datetime'></td>
+            <td data-attr='completed_at' data-transform='datetime'></td>
+            <td>
+                <span data-attr='success' data-transform='class-success'></span>
+            </td>
+            <td>
+                <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">View Task</button>
+                <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i>
+            </td>
+        </tr>
+    </script>
+
+    <script id="tasks-table-commands-template" type="text/x-handlebars-template">
+        <tr data-task='{{ taskName }}'>
+            {{> tasksName }}
+            {{> tasksCommand }}
+            <td>
+                <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">View Task</button>
+                <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i>
+            </td>
+        </tr>
+    </script>
+
+    <script id="tasks-table-timeouts-template" type="text/x-handlebars-template">
+        <tr data-task='{{ taskName }}'>
+            {{> tasksName }}
+            {{> tasksSoftTimeout }}
+            {{> tasksHardTimeout }}
+            <td>
+                <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">View Task</button>
+                <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i>
+            </td>
+        </tr>
+    </script>
+
+    <script id="tasks-table-remote-template" type="text/x-handlebars-template">
+        <tr data-task='{{ taskName }}'>
+            {{> tasksName }}
+            {{> tasksRemoteTarget }}
+            <td>
+                <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">View Task</button>
+                <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i>
+            </td>
+        </tr>
+    </script>
+
+    <script id="tasks-data-name-template" type="text/x-handlebars-template">
+        <td data-attr='name'>
+            {{#if text}}{{text}}{{/if}}
+            <i class='icon-pencil edit-task'></i>
+        </td>
+    </script>
+
+    <script id="tasks-data-command-template" type="text/x-handlebars-template">
+        <td data-attr='command'>
+            {{#if text}}{{text}}{{/if}}
+            <i class='icon-pencil edit-task'></i>
+        </td>
+    </script>
+
+    <script id="tasks-data-soft-timeout-template" type="text/x-handlebars-template">
+        <td data-attr='soft_timeout'>
+            {{text}}<i class='icon-pencil edit-task'></i>
+        </td>
+    </script>
+
+    <script id="tasks-data-hard-timeout-template" type="text/x-handlebars-template">
+        <td data-attr='hard_timeout'>
+            {{text}}<i class='icon-pencil edit-task'></i>
+        </td>
+    </script>
+
+    <script id="tasks-data-remote-target-template" type="text/x-handlebars-template">
+        <td data-attr='hostname'>
+            {{text}}<i class='icon-pencil edit-task'></i>
+        </td>
+    </script>
+
+    <script id="tasks-edit-template" type="text/x-handlebars-template">
+        <td>
+            {{#equal field "Remote Target"}}
+            <select id='target-hosts-dropdown' name='targethosts' data-field='{{ field }}'
+                    data-original='{{ original }}' value='{{ original }}'>
+                <option></option>
+                {{#each knownHosts}}
+                <option value="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
+            {{else}}
+            <input type='text' class='submit-on-enter' data-field='{{ field }}'
+                   data-original='{{ original }}' value='{{ original }}'>
+            </input>
+            {{/equal}}
+            <button class='btn btn-success save-task-edit'>Save</button>
+        </td>
+    </script>
+
+    {% endraw %}
+
+{% endblock head %}
+
+{% block navbar_current %}
+    <li><a href='#'>Job Detail: {{ job.name }}</a></li>
+{% endblock navbar_current %}
+
+{% block content %}
+    <div class='page-header'>
+        <h3>Job Detail: {{ job.name }}</h3>
+        <h3 id='job-status' class='right'></h3>
+    </div>
+
+    <div id='fallback-modal' class='modal hide'>
+        <div class='modal-header'>
+            <h3>Something's Wrong!</h3>
+        </div>
+        <div class='modal-body'>
+            <p>It looks like you've either lost your connection to the server or something has produced an error. If
+                you're still connected to the server, you might want to check your Dagobahd logs to see if you can
+                identify the problem.</p>
+        </div>
+        <div class='modal-footer'>
+            <button class='btn btn-primary' onclick='window.location.href = location.origin;'>Back to Jobs Overview
+            </button>
+            <button class='btn btn-success' data-dismiss='modal'>Try to Reconnect</button>
+        </div>
+    </div>
+
+    <div id='graph-alert' class='alert hidden'>
+    </div>
+
+    <div class='relative-holder'>
+        <i class='icon icon-info-sign toggle-help'></i>
+    </div>
+
+    <div class='chart-help hidden'>
+        <h4>Manipulating the DAG Directly</h4>
+        <ul>
+            <li>To add a new task, scroll down below the graph to the "Add Task" section.</li>
+            <li>To add a new dependency, just click and drag on the graph. Start at the independent node, and drag to
+                the dependent node. In other words, if task A needs to finish before task B can run, then drag a line
+                from task A to task B.
+            </li>
+            <li>To delete a task or dependency, first click on it to select it (it will become dashed). Then hit "d" on
+                your keyboard (your mouse needs to be over the graph for this to work). You can also delete tasks in the
+                table below.
+            </li>
+        </ul>
+    </div>
+
+    <div class='job-graph'>
+    </div>
+    <div class="cron">
+        <div id="div_cron">
+
+        </div>
+        <span>Select Cron:</span>
+        <label id="txtcron"></label>
+    </div>
+    <div class='row' id='config'>
+        <div class='span6'>
+            <h3>Job Scheduling</h3>
+
+            <div id='schedule-alert' class='alert hidden'>
+            </div>
+
+            <form id='schedule' class='form form-horizontal'>
+
+                <div class='control-group'>
+                    <label class='control-label' for='cron-schedule'>Cron Schedule String<br/>(M H DoM Mon DoW)</label>
+                    <div class='controls'>
+                        <input id='cron-schedule' type='text' class='input' value='{{ job.cron_schedule }}'></input>
+                    </div>
+                </div>
+
+                <div class='control-group'>
+                    <label class='control-label' for='next-run'>Next Scheduled Run<br/>(local time)</label>
+                    <div class='controls'>
+                        <input id='next-run' type='text' class='input' disabled></input>
+                    </div>
+                </div>
+
+                <div class='control-group'>
+                    <div class='controls'>
+                        <button id='save-schedule' class='btn btn-sequence btn-success' onclick='return false;'>Save
+                        </button>
+                        <button id='clear-schedule' class='btn btn-sequence btn-warning' onclick='return false;'>
+                            Unschedule
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+        <div class='span6'>
+            <h3>Job State Control</h3>
+
+            <div id='state-alert' class='alert hidden'>
+            </div>
+
+            <button id='start-job' class='btn btn-sequence btn-success'>Start Job from Beginning</button>
+            <button id='retry-job' class='btn btn-sequence btn-success'>Retry Failed Tasks</button>
+            <br/><br/>
+            <button id='terminate-job' class='btn btn-sequence btn-warning'>Terminate Running Tasks</button>
+            <button id='kill-job' class='btn btn-sequence btn-danger'>Kill Running Tasks</button>
+        </div>
+    </div>
+
+    <div id='new-alert' class='alert hidden'>
+    </div>
+
+    <div class='row' id='config'>
+    <div class='span12'>
+        <h3>Job Notes</h3>
+        <div id='notes-alert' class='alert hidden'>
+        </div>
+        <textarea id='job-notes'>{{ job.notes }}</textarea>
+        <br/>
+        <button id='save-notes' class='btn btn-success' onclick='return false;'>Save Notes</button>
+        <br/>
+        <br/>
+    </div>
+
+    <h3>Add New Task</h3>
+
+    <form class='form'>
+
+        <label>Name</label>
+        <input id='new-task-name' class='input-xxlarge' type='text' placeholder='Task Name'></input>
+
+        <label class="checkbox">
+            <input type="checkbox" value="remote" id="remote_checkbox"> Remote
+        </label>
+        <div id="target_hosts" style="display: none;">
+            <label>Target Hosts:</label>
+            <select id="target-hosts-dropdown" name="target_hosts">
+                {% for host in hosts %}
+                    <option value="{{ host }}">{{ host }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <label>Command</label>
+        <textarea id='new-task-command' rows="3" placeholder='Task Command'></textarea>
+
+        <br/>
+        <button id='add-task' class='btn btn-success' onclick='return false;'>Add Task</button>
+
+    </form>
+
+    <div class='row'>
+        <div class='span12'>
+            <h3 class='inline'>{{ job.name }}'s Tasks</h3>
+
+            <div id='table-toggle' class='btn-group' data-toggle='buttons-radio'>
+                <button class='btn active' value='results'>Results</button>
+                <button class='btn' value='commands'>Commands</button>
+                <button class='btn' value='timeouts'>Timeouts</button>
+                <button class='btn' value='remote'>Remote</button>
+            </div>
+
+            <div id='table-alert' class='alert hidden'>
+            </div>
+
+            <table id='tasks-table' class='table'>
+                <thead id='tasks-headers'>
+                </thead>
+                <tbody id='tasks-body'>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block body_scripts %}
+    <script src="/static/js/job_model.js"></script>
+    <script src="/static/js/job_graph.js"></script>
+    <script src="/static/js/job_detail.js"></script>
+{% endblock body_scripts %}

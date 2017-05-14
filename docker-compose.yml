@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+    sainc:
+        build: .
+        links:
+         - mongo:mongodb
+        ports:
+         - 9527:9000
+        command: python run_app.py
+        volumes:
+         - ./workspace:/workspace/plugin
+
+    mongo:
+        image: mongo:3.2.10
+        volumes:
+        - ./data/db:/data/db

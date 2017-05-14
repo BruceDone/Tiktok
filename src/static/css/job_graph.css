@@ -1,0 +1,75 @@
+svg {
+	background-color: #FFF;
+	border: 1px solid #CCCCCC;
+	cursor: default;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+svg:not(.active):not(.ctrl) {
+	cursor: crosshair;
+}
+
+path.link {
+	fill: none;
+	stroke: #000;
+	stroke-width: 3px;
+	cursor: default;
+}
+
+svg:not(.active):not(.ctrl) path.link {
+	cursor: pointer;
+}
+
+path.link.selected {
+	stroke-dasharray: 10,2;
+}
+
+path.link.dragline {
+	pointer-events: none;
+}
+
+path.link.hidden {
+	stroke-width: 0;
+}
+
+rect.node {
+	stroke: #888888;
+	stroke-width: 1.5px;
+	cursor: pointer;
+}
+
+rect.node.selected {
+	stroke-width: 5px;
+	stroke-dasharray: 10,2;
+	stroke: #333333;
+}
+
+.node.waiting {
+	fill: #CCCCCC;
+}
+
+.node.running {
+	fill: orange;
+}
+
+.node.complete {
+	fill: #32cd32;
+}
+
+.node.failed {
+	fill: red;
+}
+
+p {
+	font: 16px sans-serif;
+	font-weight: bold;
+	color: black;
+}
+
+.node-object {
+	cursor: pointer;
+}

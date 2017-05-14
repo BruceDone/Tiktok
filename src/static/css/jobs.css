@@ -1,0 +1,50 @@
+span.waiting {
+}
+
+span.failed {
+	color: red;
+	font-weight: bold;
+}
+
+span.running {
+	color: green;
+}
+
+h4.inline {
+	display: inline-block;
+}
+
+form {
+	display: inline-block;
+	margin-left: 20px;
+}
+
+form button {
+	margin-left: 20px;
+}
+
+td:last-child {
+	width: 21%;
+}
+
+td > i {
+	opacity: 0;
+	cursor: pointer;
+	margin-left: 10px;
+}
+
+td:hover > i {
+	opacity: 1;
+}
+
+.inline.control-label {
+	width: 30%;
+}
+
+.aligned-input {
+	width: 300px !important;
+}
+
+.aligned-input[type=file] {
+	padding-right: 7px;
+}
