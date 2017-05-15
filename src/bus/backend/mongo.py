@@ -50,6 +50,8 @@ class MongoBackend(BaseBackend):
         self.log_coll = self.db[log_collection]
 
         self.log_coll.ensure_index("save_date")
+        self.log_coll.ensure_index("job_id")
+        self.log_coll.ensure_index("log_id")
 
     def __repr__(self):
         return '<MongoBackend (host: %s, port: %s)>' % (self.host, self.port)
