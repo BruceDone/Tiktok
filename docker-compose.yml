@@ -6,7 +6,7 @@ services:
         links:
          - mongo:mongodb
         ports:
-         - 9527:9000
+         - 9000:9000
         command: python run_app.py
         volumes:
          - ./workspace:/workspace/plugin
