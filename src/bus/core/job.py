@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+import json
+from copy import deepcopy
+from datetime import datetime
+import threading
+from croniter import croniter
 from src.bus.log.config import logger
 from dag import DAG
-import threading
 from .components import JobState
 from src.bus.exceptions.dagobah import DagobahError
 from .task import Task
-from datetime import datetime
-from croniter import croniter
-from copy import deepcopy
-import json
 from src.bus.common.util import StrictJSONEncoder
 
 

@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-from src.bus.log.config import logger
+
 import subprocess
+import os
 import json
 from  datetime import datetime
 import paramiko
-import os
-from src.bus.exceptions.dagobah import DagobahError
 import threading
-from src.bus.common.util import StrictJSONEncoder
 import tempfile
+
+from src.bus.log.config import logger
+from src.bus.exceptions.dagobah import DagobahError
+from src.bus.common.util import StrictJSONEncoder
 
 
 class Task(object):

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+import os
+import json
+import paramiko
 from src.bus.log.config import logger
 from src.bus.backend.base import BaseBackend
 from .components import Scheduler, JobState
 from src.bus.common.util import StrictJSONEncoder
 from src.bus.exceptions.dagobah import DagobahError
 from src.bus.core.job import Job
-import paramiko
-import os
-import json
+
 
 class Dagobah(object):
     """ Top-level controller for all Dagobah usage.
